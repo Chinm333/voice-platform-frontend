@@ -118,6 +118,19 @@ export default function DashboardClient({ page, limit }: DashboardClientProps) {
 
   return (
     <>
+      <div className="mt-6 grid grid-cols-2 gap-3 text-sm sm:max-w-[260px]">
+        <div className="rounded-2xl bg-white/75 p-4">
+          <p className="text-[var(--muted)]">Candidates</p>
+          <p className="mt-1 text-2xl font-semibold">{total}</p>
+        </div>
+        <div className="rounded-2xl bg-white/75 p-4">
+          <p className="text-[var(--muted)]">Page</p>
+          <p className="mt-1 text-2xl font-semibold">
+            {page}/{totalPages}
+          </p>
+        </div>
+      </div>
+
       {debugEnabled ? (
         <div className="glass-panel mt-8 rounded-[1.5rem] p-4 text-xs text-[var(--ink-soft)]">
           <div>DashboardClient mounted: true</div>

@@ -45,16 +45,6 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
                                 any candidate for a fuller read on the signal behind the number.
                             </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-3 text-sm sm:min-w-[280px]">
-                            <div className="rounded-2xl bg-white/75 p-4">
-                                <p className="text-[var(--muted)]">Candidates</p>
-                                <p className="mt-1 text-2xl font-semibold">--</p>
-                            </div>
-                            <div className="rounded-2xl bg-white/75 p-4">
-                                <p className="text-[var(--muted)]">Page</p>
-                                <p className="mt-1 text-2xl font-semibold">--</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
