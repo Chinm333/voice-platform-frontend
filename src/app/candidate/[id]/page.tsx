@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 async function getCandidate(id: string) {
-    const res = await fetch(`http://localhost:5000/api/candidates?id=${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/candidates?id=${id}`, {
         cache: "no-store",
     });
 

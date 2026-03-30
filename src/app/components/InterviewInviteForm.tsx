@@ -26,7 +26,7 @@ export default function InterviewInviteForm() {
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/send-interview-invite", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/send-interview-invite`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

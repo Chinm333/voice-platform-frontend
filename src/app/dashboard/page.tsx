@@ -19,7 +19,7 @@ type CandidateApiResponse = {
 
 async function getData(page: number, limit: number) {
     const res = await fetch(
-        `http://localhost:5000/api/candidates?page=${page}&limit=${limit}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/candidates?page=${page}&limit=${limit}`,
         { cache: "no-store" }
     );
     return res.json() as Promise<CandidateApiResponse>;
