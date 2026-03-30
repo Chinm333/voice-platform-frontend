@@ -1,55 +1,5 @@
 import Link from "next/link";
-import CandidateSummaryCard from "../components/CandidateSummaryCard";
-
-type Candidate = {
-    id: number;
-    name: string;
-    role: string;
-    score: number;
-    summary: string;
-    decision: string;
-};
-
-type CandidateApiResponse = {
-    total: number;
-    page: number;
-    limit: number;
-    data: Candidate[];
-};
-
-const apiBaseUrl = (process.env.API_URL || process.env.NEXT_PUBLIC_API_URL)?.replace(/\/$/, "");
-
-async function getData(page: number, limit: number) {
-    const res = await fetch(
-        `${apiBaseUrl}/api/candidates?page=${page}&limit=${limit}`,
-        { cache: "no-store" }
-    );
-
-    if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        console.error("Candidates fetch failed:", res.status, text);
-        return {
-            total: 0,
-            page,
-            limit,
-            data: [],
-        };
-    }
-
-    const contentType = res.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-        const text = await res.text().catch(() => "");
-        console.error("Candidates fetch returned non-JSON:", text);
-        return {
-            total: 0,
-            page,
-            limit,
-            data: [],
-        };
-    }
-
-    return res.json() as Promise<CandidateApiResponse>;
-}
+import DashboardClient from "../components/DashboardClient";
 
 type DashboardPageProps = {
     searchParams: Promise<{ page?: string }>;
@@ -59,10 +9,6 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
     const resolvedSearchParams = await searchParams;
     const page = Number(resolvedSearchParams?.page || 1);
     const limit = 10;
-    const result = await getData(page, limit);
-    const totalPages = Math.max(1, Math.ceil(result.total / result.limit));
-    const prevPage = Math.max(page - 1, 1);
-    const nextPage = Math.min(page + 1, totalPages);
 
     return (
         <main className="px-6 py-8 md:px-10 md:py-10">
@@ -102,59 +48,17 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
                         <div className="grid grid-cols-2 gap-3 text-sm sm:min-w-[280px]">
                             <div className="rounded-2xl bg-white/75 p-4">
                                 <p className="text-[var(--muted)]">Candidates</p>
-                                <p className="mt-1 text-2xl font-semibold">{result.total}</p>
+                                <p className="mt-1 text-2xl font-semibold">--</p>
                             </div>
                             <div className="rounded-2xl bg-white/75 p-4">
                                 <p className="text-[var(--muted)]">Page</p>
-                                <p className="mt-1 text-2xl font-semibold">
-                                    {page}/{totalPages}
-                                </p>
+                                <p className="mt-1 text-2xl font-semibold">--</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    {result.data.map((c) => (
-                        <CandidateSummaryCard key={c.id} candidate={c} />
-                    ))}
-                </div>
-
-                {result.data.length === 0 ? (
-                    <div className="glass-panel mt-8 rounded-[1.75rem] p-10 text-center">
-                        <h2 className="text-2xl font-semibold text-[var(--foreground)]">
-                            No candidates yet
-                        </h2>
-                        <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
-                            Run an interview first, then the completed evaluation will
-                            appear here automatically.
-                        </p>
-                    </div>
-                ) : null}
-
-                <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-full border border-[var(--line)] bg-white/65 px-5 py-4 text-sm backdrop-blur md:flex-row">
-                    <Link
-                        href={`/dashboard?page=${prevPage}`}
-                        className={`rounded-full px-5 py-3 font-semibold transition ${page === 1
-                                ? "pointer-events-none bg-white/60 text-[var(--muted)] opacity-55"
-                                : "bg-[var(--foreground)] text-white hover:bg-[var(--accent-strong)]"
-                            }`}
-                    >
-                        Previous
-                    </Link>
-                    <span className="text-[var(--muted)]">
-                        Showing page {page} of {totalPages}
-                    </span>
-                    <Link
-                        href={`/dashboard?page=${nextPage}`}
-                        className={`rounded-full px-5 py-3 font-semibold transition ${page === totalPages
-                                ? "pointer-events-none bg-white/60 text-[var(--muted)] opacity-55"
-                                : "bg-[var(--foreground)] text-white hover:bg-[var(--accent-strong)]"
-                            }`}
-                    >
-                        Next
-                    </Link>
-                </div>
+                <DashboardClient page={page} limit={limit} />
             </div>
         </main>
     );
