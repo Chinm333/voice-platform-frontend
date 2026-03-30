@@ -1,12 +1,23 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+const apiBaseUrl = (process.env.API_URL || process.env.NEXT_PUBLIC_API_URL)?.replace(/\/$/, "");
+
 async function getCandidate(id: string) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/candidates?id=${id}`, {
+    const res = await fetch(`${apiBaseUrl}/api/candidates?id=${id}`, {
         cache: "no-store",
     });
 
     if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        console.error("Candidate fetch failed:", res.status, text);
+        return null;
+    }
+
+    const contentType = res.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+        const text = await res.text().catch(() => "");
+        console.error("Candidate fetch returned non-JSON:", text);
         return null;
     }
 

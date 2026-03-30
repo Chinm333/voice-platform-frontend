@@ -17,11 +17,37 @@ type CandidateApiResponse = {
     data: Candidate[];
 };
 
+const apiBaseUrl = (process.env.API_URL || process.env.NEXT_PUBLIC_API_URL)?.replace(/\/$/, "");
+
 async function getData(page: number, limit: number) {
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/candidates?page=${page}&limit=${limit}`,
+        `${apiBaseUrl}/api/candidates?page=${page}&limit=${limit}`,
         { cache: "no-store" }
     );
+
+    if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        console.error("Candidates fetch failed:", res.status, text);
+        return {
+            total: 0,
+            page,
+            limit,
+            data: [],
+        };
+    }
+
+    const contentType = res.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+        const text = await res.text().catch(() => "");
+        console.error("Candidates fetch returned non-JSON:", text);
+        return {
+            total: 0,
+            page,
+            limit,
+            data: [],
+        };
+    }
+
     return res.json() as Promise<CandidateApiResponse>;
 }
 
