@@ -32,6 +32,11 @@ export default function DashboardClient({ page, limit }: DashboardClientProps) {
   const [data, setData] = useState<CandidateApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [debugEnabled, setDebugEnabled] = useState(false);
+
+  useEffect(() => {
+    setDebugEnabled(new URLSearchParams(window.location.search).has("debug"));
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -41,18 +46,21 @@ export default function DashboardClient({ page, limit }: DashboardClientProps) {
       setError(null);
 
       try {
+        console.info("DashboardClient fetch start:", apiBaseUrl, page, limit);
         const response = await fetch(
           `${apiBaseUrl}/api/candidates?page=${page}&limit=${limit}`
         );
 
         if (!response.ok) {
           const text = await response.text().catch(() => "");
+          console.error("DashboardClient fetch failed:", response.status, text);
           throw new Error(text || `API error: ${response.status}`);
         }
 
         const contentType = response.headers.get("content-type") || "";
         if (!contentType.includes("application/json")) {
           const text = await response.text().catch(() => "");
+          console.error("DashboardClient non-JSON:", text);
           throw new Error(text || "API returned non-JSON response.");
         }
 
@@ -110,6 +118,14 @@ export default function DashboardClient({ page, limit }: DashboardClientProps) {
 
   return (
     <>
+      {debugEnabled ? (
+        <div className="glass-panel mt-8 rounded-[1.5rem] p-4 text-xs text-[var(--ink-soft)]">
+          <div>DashboardClient mounted: true</div>
+          <div>API base URL: {apiBaseUrl || "(empty)"}</div>
+          <div>Page: {page}</div>
+          <div>Limit: {limit}</div>
+        </div>
+      ) : null}
       <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {data?.data.map((candidate) => (
           <CandidateSummaryCard key={candidate.id} candidate={candidate} />
