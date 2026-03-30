@@ -6,5 +6,4 @@ The frontend is built with Next.js and Tailwind CSS, providing a clean and respo
 
 ### Live: [Voice Hiring Platform](https://voice-platform-frontend-w79i.onrender.com)
 
-#### Watch Now
-[![YouTube video thumbnail]([https://img.youtube.com](https://drive.google.com/file/d/FILE_ID/preview))](https://youtu.be/aW98OoDtwwA)
+[![Watch Now]([https://img.youtube.com]([https://drive.google.com/file/d/FILE_ID/preview](https://drive.google.com/file/d/1GJs-rxA4oZVDvtu81yV8-hBxe3xCgMRx/view?usp=sharing)))](https://youtu.be/aW98OoDtwwA)
